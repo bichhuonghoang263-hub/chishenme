@@ -32,13 +32,13 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-       - name: Add Android platform
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Add Android platform
         run: |
           rm -rf android
           npx cap add android
-
-      - name: Add Android platform
-        run: npx cap add android
 
       - name: Sync Capacitor
         run: npx cap sync android
