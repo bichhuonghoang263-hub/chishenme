@@ -1,0 +1,29 @@
+# Node
+node_modules/
+npm-debug.log
+
+# Electron build
+dist/
+
+# Capacitor
+.capacitor/
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/.idea/
+android/captures/
+android/.externalNativeBuild/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
