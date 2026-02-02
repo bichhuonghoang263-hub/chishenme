@@ -1,0 +1,9 @@
+{
+  "appId": "com.chishenme.app",
+  "appName": "今天吃什么",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  }
+}

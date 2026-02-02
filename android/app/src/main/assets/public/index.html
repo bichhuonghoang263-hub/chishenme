@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>今天吃什么 - 做饭教程助手</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🍳 今天吃什么</h1>
+            <p class="subtitle">选择你想做的菜，获取详细教程</p>
+        </header>
+
+        <main>
+            <!-- 菜品选择区 -->
+            <section class="dish-selection" id="dishSelection">
+                <div class="selection-header">
+                    <h2>选择菜品</h2>
+                    <button class="add-recipe-btn" onclick="openAddModal()">+ 添加菜谱</button>
+                </div>
+
+                <!-- 分类导航 -->
+                <div class="category-nav" id="categoryNav">
+                    <button class="category-btn active" onclick="filterCategory('all')">全部</button>
+                </div>
+
+                <div class="dish-grid" id="dishGrid">
+                    <!-- 菜品卡片将通过JS动态生成 -->
+                </div>
+            </section>
+
+            <!-- 教程展示区 -->
+            <section class="recipe-content" id="recipeContent" style="display: none;">
+                <button class="back-btn" onclick="goBack()">← 返回选择</button>
+
+                <div class="recipe-header">
+                    <h2 id="recipeTitle"></h2>
+                    <div class="recipe-meta">
+                        <span id="recipeTime"></span>
+                        <span id="recipeDifficulty"></span>
+                        <span id="recipeCategory"></span>
+                    </div>
+                    <div class="recipe-actions">
+                        <button class="action-btn edit-btn" onclick="editCurrentRecipe()">✏️ 编辑</button>
+                        <button class="action-btn delete-btn" onclick="deleteCurrentRecipe()">🗑️ 删除</button>
+                    </div>
+                </div>
+
+                <!-- 食材清单 -->
+                <div class="ingredients-section">
+                    <h3>🛒 需要买的菜</h3>
+                    <div class="ingredients-list" id="ingredientsList"></div>
+                </div>
+
+                <!-- 调料清单 -->
+                <div class="seasonings-section">
+                    <h3>🧂 调料</h3>
+                    <div class="seasonings-list" id="seasoningsList"></div>
+                </div>
+
+                <!-- 制作步骤 -->
+                <div class="steps-section">
+                    <div class="section-header">
+                        <h3>👨‍🍳 制作步骤</h3>
+                        <button class="generate-images-btn" onclick="generateAllStepImages()" id="generateImagesBtn">
+                            🎨 生成步骤图片
+                        </button>
+                    </div>
+                    <div class="steps-list" id="stepsList"></div>
+                </div>
+
+                <!-- 小贴士 -->
+                <div class="tips-section" id="tipsSection">
+                    <h3>💡 小贴士</h3>
+                    <p id="tipsContent"></p>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>祝你做菜愉快！🎉</p>
+        </footer>
+    </div>
+
+    <!-- 添加/编辑菜谱模态框 -->
+    <div class="modal" id="recipeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">添加菜谱</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+
+            <form class="recipe-form" onsubmit="saveRecipe(event)">
+                <input type="hidden" id="editRecipeId" value="">
+
+                <div class="form-group">
+                    <label>菜谱名称 *</label>
+                    <input type="text" id="recipeName" required placeholder="例如：西红柿鸡蛋面">
+                </div>
+
+                <div class="form-group">
+                    <label>菜品图标 (emoji)</label>
+                    <input type="text" id="recipeEmoji" placeholder="例如：🍜" maxlength="2">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>分类 *</label>
+                        <select id="recipeCategory" required>
+                            <option value="">选择分类</option>
+                            <option value="面食">面食</option>
+                            <option value="炒菜">炒菜</option>
+                            <option value="汤类">汤类</option>
+                            <option value="凉菜">凉菜</option>
+                            <option value="主食">主食</option>
+                            <option value="甜品">甜品</option>
+                            <option value="小吃">小吃</option>
+                            <option value="其他">其他</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>难度</label>
+                        <select id="recipeDifficultyInput">
+                            <option value="简单">简单</option>
+                            <option value="中等">中等</option>
+                            <option value="困难">困难</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>制作时间</label>
+                    <input type="text" id="recipeTimeInput" placeholder="例如：30分钟">
+                </div>
+
+                <div class="form-group">
+                    <label>食材（每行一个，格式：名称 数量）*</label>
+                    <textarea id="recipeIngredients" required placeholder="面条 200克&#10;鸡蛋 2个&#10;西红柿 2个" rows="4"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>调料（每行一个，格式：名称 数量）</label>
+                    <textarea id="recipeSeasonings" placeholder="盐 1茶匙&#10;生抽 1汤匙&#10;香油 少许" rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>制作步骤（每行一步）*</label>
+                    <textarea id="recipeSteps" required placeholder="准备食材，切好备用&#10;锅中加水烧开，放入面条&#10;煮3分钟后捞出" rows="5"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>小贴士</label>
+                    <textarea id="recipeTips" placeholder="分享你的烹饪小技巧..." rows="2"></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" onclick="closeModal()">取消</button>
+                    <button type="submit" class="submit-btn">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 删除确认模态框 -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-content small">
+            <div class="modal-header">
+                <h2>确认删除</h2>
+                <button class="close-btn" onclick="closeDeleteModal()">&times;</button>
+            </div>
+            <p>确定要删除这个菜谱吗？删除后无法恢复。</p>
+            <div class="form-actions">
+                <button class="cancel-btn" onclick="closeDeleteModal()">取消</button>
+                <button class="delete-confirm-btn" onclick="confirmDelete()">确认删除</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 编辑提示词模态框 -->
+    <div class="modal" id="promptModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📝 编辑图片提示词</h2>
+                <button class="close-btn" onclick="closePromptModal()">&times;</button>
+            </div>
+
+            <div class="prompt-form">
+                <div class="form-group">
+                    <label>步骤描述</label>
+                    <div id="promptStepText" class="step-text-display"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="promptInput">AI 生成的提示词（可修改）</label>
+                    <textarea id="promptInput" rows="4" placeholder="输入英文图片描述..."></textarea>
+                </div>
+
+                <div class="prompt-tips">
+                    <p>💡 提示词建议：</p>
+                    <ul>
+                        <li>描述要具体：包含食材、动作、场景</li>
+                        <li>突出视觉元素：颜色、质感、光线</li>
+                        <li>使用英文描述效果更好</li>
+                        <li>例如：Fresh tomatoes being cut on wooden board, bright kitchen lighting</li>
+                    </ul>
+                </div>
+
+                <div class="form-actions">
+                    <button class="cancel-btn" onclick="closePromptModal()">取消</button>
+                    <button class="submit-btn" onclick="regenerateWithPrompt()">🎨 重新生成</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
